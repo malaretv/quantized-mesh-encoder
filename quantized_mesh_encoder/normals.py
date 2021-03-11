@@ -59,8 +59,8 @@ def oct_encode(vec):
     result = vec[:, 0:2] / l1_norm[:, np.newaxis]
 
     # TODO: struggled with the numpy way to do this
-    for idx, res in enumerate(vec):
-        if res[2] < 0.0:
+    for idx, res in enumerate(result):
+        if vec[idx, 2] < 0.0:
             x = res[0]
             y = res[1]
             res[0] = (1.0 - abs(y)) * signNotZero(x)
