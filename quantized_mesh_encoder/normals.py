@@ -35,7 +35,7 @@ def compute_vertex_normals(positions, indices):
     # According to the implementation this is ported from, since you weight the
     # face normals by the area, you can just sum up the vectors.
     vertex_normals = np.zeros(positions.shape, dtype=np.float32)
-    add_vertex_normals(indices, weighted_face_normals, vertex_normals)
+    add_vertex_normals(indices, weighted_face_normals.astype(np.float32), vertex_normals)
 
     # Normalize vertex normals by dividing by each vector's length
     normalized_vertex_normals = vertex_normals / np.linalg.norm(
