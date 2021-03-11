@@ -3,12 +3,12 @@ from struct import pack
 import numpy as np
 
 from .bounding_sphere import bounding_sphere
-from .constants import HEADER, NP_STRUCT_TYPES, VERTEX_DATA, WGS84
+from .constants import HEADER, NP_STRUCT_TYPES, VERTEX_DATA, EXTENSION_HEADER, WGS84
 from .ecef import to_ecef
 from .occlusion import occlusion_point
 from .util import zig_zag_encode
 from .util_cy import encode_indices
-
+from .normals import compute_vertex_normals, oct_encode
 
 def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS84):
     """Create bounding sphere from positions
@@ -70,6 +70,16 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
     write_indices(f, indices, n_vertices)
 
     write_edge_indices(f, positions, n_vertices)
+
+    normals = compute_vertex_normals(positions, indices)
+    encoded = oct_encode(normals)
+    encoded.flatten('C')
+    encoded.tobytes('C')
+
+    s_normals = n_vertices * 2
+    f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
+    f.write(pack(EXTENSION_HEADER['extentsionLength'], s_normals))
+    f.write(pack('<{:n}s'.format(s_normals), encoded))
 
 
 def compute_header(positions, sphere_method, ellipsoid = WGS84):
