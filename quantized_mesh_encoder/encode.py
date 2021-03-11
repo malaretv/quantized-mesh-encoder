@@ -73,8 +73,8 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
 
     normals = compute_vertex_normals(positions, indices)
     encoded = oct_encode(normals)
-    encoded.flatten('C')
-    encoded.tobytes('C')
+    encoded = encoded.flatten('C')
+    encoded = encoded.tobytes('C')
 
     s_normals = n_vertices * 2
     f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
