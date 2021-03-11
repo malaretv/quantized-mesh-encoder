@@ -43,6 +43,8 @@ def compute_vertex_normals(positions, indices):
 
     return normalized_vertex_normals
 
+def signNotZero(v):
+    return - 1.0 if v < 0.0 else 1.0
 
 def oct_encode(vec):
     """
@@ -58,11 +60,11 @@ def oct_encode(vec):
 
     # TODO: Is 3rd position ever negative?
     # Might depend on triangle winding order...
-    # if vec[2] < 0.0:
-    #     x = res[0]
-    #     y = res[1]
-    #     res[0] = (1.0 - abs(y)) * signNotZero(x)
-    #     res[1] = (1.0 - abs(x)) * signNotZero(y)
+     if vec[2] < 0.0:
+         x = result[0]
+         y = result[1]
+         result[0] = (1.0 - abs(y)) * signNotZero(x)
+         result[1] = (1.0 - abs(x)) * signNotZero(y)
 
     # Converts a scalar value in the range [-1.0, 1.0] to a 8-bit 2's complement
     # number.
