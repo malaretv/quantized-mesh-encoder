@@ -10,7 +10,7 @@ from .util import zig_zag_encode
 from .util_cy import encode_indices
 from .normals import compute_vertex_normals, oct_encode
 
-def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS84):
+def encode(f, positions, indices, bounds=None, sphere_method=None, generate_normals=False, ellipsoid=WGS84):
     """Create bounding sphere from positions
 
     Args:
@@ -51,6 +51,7 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
           - None: Runs both the naive and the ritter methods, then returns the
             smaller of the two. Since this runs both algorithms, it takes around
             500 µs on my computer
+        - generate_normals: bool that determines whether vertexnormals are generated with the tile
         - ellisoid: a dict that defines an ellipsoid with with "a" and "b" values. Defaults to WGS84
     """
 
@@ -71,15 +72,9 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
 
     write_edge_indices(f, positions, n_vertices)
 
-    normals = compute_vertex_normals(positions, indices)
-    encoded = oct_encode(normals)
-    encoded = encoded.flatten('C')
-    encoded = encoded.tobytes('C')
+    if generate_normals:
+        write_vertex_normals(f, positions, indices)
 
-    s_normals = len(encoded)
-    f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
-    f.write(pack(EXTENSION_HEADER['extensionLength'], s_normals))
-    f.write(encoded)
  
 
 def compute_header(positions, sphere_method, ellipsoid = WGS84):
@@ -282,3 +277,14 @@ def write_edge_indices(f, positions, n_vertices):
 
     f.write(pack(NP_STRUCT_TYPES[np.uint32], len(top)))
     f.write(top.tobytes())
+
+def write_vertex_normals(f, positions, indicies):
+    normals = compute_vertex_normals(positions, indices)
+    encoded = oct_encode(normals)
+    encoded = encoded.flatten('C')
+    encoded = encoded.tobytes('C')
+
+    s_normals = len(encoded)
+    f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
+    f.write(pack(EXTENSION_HEADER['extensionLength'], s_normals))
+    f.write(encoded)

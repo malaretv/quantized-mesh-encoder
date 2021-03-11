@@ -43,8 +43,6 @@ def compute_vertex_normals(positions, indices):
 
     return normalized_vertex_normals
 
-def signNotZero(v):
-    return -1.0 if v < 0.0 else 1.0
 
 def oct_encode(vec):
     """
@@ -58,13 +56,13 @@ def oct_encode(vec):
     l1_norm = np.linalg.norm(vec, ord=1, axis=1)
     result = vec[:, 0:2] / l1_norm[:, np.newaxis]
 
-    # TODO: struggled with the numpy way to do this
-    for idx, res in enumerate(result):
-        if vec[idx, 2] < 0.0:
-            x = res[0]
-            y = res[1]
-            res[0] = (1.0 - abs(y)) * signNotZero(x)
-            res[1] = (1.0 - abs(x)) * signNotZero(y)
+    # TODO: Is 3rd position ever negative?
+    # Might depend on triangle winding order...
+    # if vec[2] < 0.0:
+    #     x = res[0]
+    #     y = res[1]
+    #     res[0] = (1.0 - abs(y)) * signNotZero(x)
+    #     res[1] = (1.0 - abs(x)) * signNotZero(y)
 
     # Converts a scalar value in the range [-1.0, 1.0] to a 8-bit 2's complement
     # number.
