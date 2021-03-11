@@ -78,7 +78,7 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
 
     s_normals = n_vertices * 2
     f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
-    f.write(pack(EXTENSION_HEADER['extentsionLength'], s_normals))
+    f.write(pack(EXTENSION_HEADER['extensionLength'], s_normals))
     f.write(pack('<{:n}s'.format(s_normals), encoded))
 
 
