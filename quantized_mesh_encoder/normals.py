@@ -44,7 +44,7 @@ def compute_vertex_normals(positions, indices):
     return normalized_vertex_normals
 
 def signNotZero(v):
-    return - 1.0 if v < 0.0 else 1.0
+    return -1.0 if v < 0.0 else 1.0
 
 def oct_encode(vec):
     """
@@ -60,7 +60,7 @@ def oct_encode(vec):
 
     # TODO: struggled with the numpy way to do this
     for idx, res in enumerate(vec):
-        if vec[idx, 2] < 0.0:
+        if res[2] < 0.0:
             x = res[0]
             y = res[1]
             res[0] = (1.0 - abs(y)) * signNotZero(x)
