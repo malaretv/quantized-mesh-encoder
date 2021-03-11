@@ -76,11 +76,11 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, ellipsoid=WGS
     encoded = encoded.flatten('C')
     encoded = encoded.tobytes('C')
 
-    s_normals = n_vertices * 2
+    s_normals = len(encoded)
     f.write(pack(EXTENSION_HEADER['extensionId'], 1))  # octvertexnormals extension is 1 in the spec
     f.write(pack(EXTENSION_HEADER['extensionLength'], s_normals))
     f.write(pack('<{:n}s'.format(s_normals), encoded))
-
+ 
 
 def compute_header(positions, sphere_method, ellipsoid = WGS84):
     header = {}
