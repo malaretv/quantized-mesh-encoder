@@ -278,7 +278,7 @@ def write_edge_indices(f, positions, n_vertices):
     f.write(pack(NP_STRUCT_TYPES[np.uint32], len(top)))
     f.write(top.tobytes())
 
-def write_vertex_normals(f, positions, indicies):
+def write_vertex_normals(f, positions, indices):
     normals = compute_vertex_normals(positions, indices)
     encoded = oct_encode(normals)
     encoded = encoded.flatten('C')
