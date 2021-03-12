@@ -15,9 +15,9 @@ def compute_vertex_normals(positions, indices):
     tri_coords = positions[indices]
 
     # a, b, and c represent a single vertex for every triangle
-    a = tri_coords[:, 0, :]
+    c = tri_coords[:, 0, :]
     b = tri_coords[:, 1, :]
-    c = tri_coords[:, 2, :]
+    a = tri_coords[:, 2, :]
 
     # This computes the normal for each triangle "face". So there's one normal
     # vector for each triangle.
@@ -41,7 +41,7 @@ def compute_vertex_normals(positions, indices):
     normalized_vertex_normals = vertex_normals / np.linalg.norm(
         vertex_normals, axis=1)[:, np.newaxis]
 
-    return -normalized_vertex_normals
+    return normalized_vertex_normals
 
 
 def oct_encode(vec):
