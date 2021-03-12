@@ -21,7 +21,7 @@ def compute_vertex_normals(positions, indices):
 
     # This computes the normal for each triangle "face". So there's one normal
     # vector for each triangle.
-    face_normals = np.cross(b - a, c - a)
+    face_normals = np.cross(c - a, b - a)
 
     # The magnitude of the cross product of b - a and c - a is the area of the
     # parallellogram spanned by these vectors; the triangle has half the area
