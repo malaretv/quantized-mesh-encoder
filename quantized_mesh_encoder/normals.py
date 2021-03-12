@@ -15,13 +15,13 @@ def compute_vertex_normals(positions, indices):
     tri_coords = positions[indices]
 
     # a, b, and c represent a single vertex for every triangle
-    c = tri_coords[:, 0, :]
+    a = tri_coords[:, 0, :]
     b = tri_coords[:, 1, :]
-    a = tri_coords[:, 2, :]
+    c = tri_coords[:, 2, :]
 
     # This computes the normal for each triangle "face". So there's one normal
     # vector for each triangle.
-    face_normals = -np.cross(a - b, a - c)
+    face_normals = np.cross(a - b, a - c)
 
     # The magnitude of the cross product of b - a and c - a is the area of the
     # parallellogram spanned by these vectors; the triangle has half the area
