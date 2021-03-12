@@ -57,7 +57,7 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, generate_norm
 
     # Convert to ndarray
     positions = positions.reshape(-1, 3).astype(np.float32)
-    indices = np.flipud(indices.reshape(-1, 3)).astype(np.uint32)
+    indices = indices.reshape(-1, 3).astype(np.uint32)
 
     header = compute_header(positions, sphere_method, ellipsoid)
     encode_header(f, header)
