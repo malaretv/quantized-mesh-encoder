@@ -41,7 +41,7 @@ def compute_vertex_normals(positions, indices):
     normalized_vertex_normals = vertex_normals / np.linalg.norm(
         vertex_normals, axis=1)[:, np.newaxis]
 
-    return normalized_vertex_normals
+    return -normalized_vertex_normals
 
 
 def oct_encode(vec):
