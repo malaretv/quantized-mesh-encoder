@@ -12,7 +12,7 @@ def compute_vertex_normals(positions, indices):
     # positions and indices are both arrays of shape (-1, 3)
     # `coords` is then an array of shape (-1, 3, 3) where each block of (i, 3,
     # 3) represents all the coordinates of a single triangle
-    tri_coords = positions[indices]
+    tri_coords = positions[indices].astype(np.float32)
 
     # a, b, and c represent a single vertex for every triangle
     a = tri_coords[:, 0, :]
@@ -21,7 +21,7 @@ def compute_vertex_normals(positions, indices):
 
     # This computes the normal for each triangle "face". So there's one normal
     # vector for each triangle.
-    face_normals = np.cross(a - b, a - c)
+    face_normals = np.cross(b - a, c - a)
 
     # The magnitude of the cross product of b - a and c - a is the area of the
     # parallellogram spanned by these vectors; the triangle has half the area
@@ -35,7 +35,7 @@ def compute_vertex_normals(positions, indices):
     # According to the implementation this is ported from, since you weight the
     # face normals by the area, you can just sum up the vectors.
     vertex_normals = np.zeros(positions.shape, dtype=np.float32)
-    add_vertex_normals(indices, weighted_face_normals.astype(np.float32), vertex_normals)
+    add_vertex_normals(indices, weighted_face_normals, vertex_normals)
 
     # Normalize vertex normals by dividing by each vector's length
     normalized_vertex_normals = vertex_normals / np.linalg.norm(
