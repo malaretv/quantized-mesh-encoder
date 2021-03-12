@@ -3,14 +3,15 @@ from struct import pack
 import numpy as np
 
 from .bounding_sphere import bounding_sphere
-from .constants import HEADER, NP_STRUCT_TYPES, VERTEX_DATA, EXTENSION_HEADER
+from .constants import HEADER, NP_STRUCT_TYPES, VERTEX_DATA, EXTENSION_HEADER, WGS84
 from .ecef import to_ecef
 from .occlusion import occlusion_point
 from .util import zig_zag_encode
 from .util_cy import encode_indices
 from .normals import compute_vertex_normals, oct_encode
 
-def encode(f, positions, indices, bounds=None, sphere_method=None, generate_normals=False):
+
+def encode(f, positions, indices, bounds=None, sphere_method=None, generate_normals=False, ellipsoid=WGS84):
     """Create bounding sphere from positions
 
     Args:
@@ -52,13 +53,14 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, generate_norm
             smaller of the two. Since this runs both algorithms, it takes around
             500 µs on my computer
         - generate_normals: bool that determines whether vertexnormals are generated with the tile
+        - ellisoid: a dict that defines an ellipsoid with with "a" and "b" values. Defaults to WGS84
     """
 
     # Convert to ndarray
     positions = positions.reshape(-1, 3).astype(np.float32)
     indices = indices.reshape(-1, 3).astype(np.uint32)
 
-    header = compute_header(positions, sphere_method)
+    header = compute_header(positions, sphere_method, ellipsoid)
     encode_header(f, header)
 
     # Linear interpolation to range u, v, h from 0-32767
@@ -75,9 +77,9 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, generate_norm
         write_vertex_normals(f, positions, indices)
 
 
-def compute_header(positions, sphere_method):
+def compute_header(positions, sphere_method, ellipsoid = WGS84):
     header = {}
-    cartesian_positions = to_ecef(positions)
+    cartesian_positions = to_ecef(positions, ellipsoid)
 
     ecef_min_x = cartesian_positions[:, 0].min()
     ecef_min_y = cartesian_positions[:, 1].min()
@@ -99,7 +101,7 @@ def compute_header(positions, sphere_method):
     header['boundingSphereCenterZ'] = center[2]
     header['boundingSphereRadius'] = radius
 
-    occl_pt = occlusion_point(cartesian_positions, center)
+    occl_pt = occlusion_point(cartesian_positions, center, ellipsoid)
     header['horizonOcclusionPointX'] = occl_pt[0]
     header['horizonOcclusionPointY'] = occl_pt[1]
     header['horizonOcclusionPointZ'] = occl_pt[2]
