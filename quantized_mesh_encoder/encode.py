@@ -60,7 +60,8 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, generate_norm
     positions = positions.reshape(-1, 3).astype(np.float32)
     indices = indices.reshape(-1, 3).astype(np.uint32)
 
-    header = compute_header(positions, sphere_method, ellipsoid)
+    cartesian_positions = to_ecef(positions, ellipsoid)
+    header = compute_header(positions, cartesian_positions, sphere_method, ellipsoid)
     encode_header(f, header)
 
     # Linear interpolation to range u, v, h from 0-32767
@@ -74,12 +75,11 @@ def encode(f, positions, indices, bounds=None, sphere_method=None, generate_norm
     write_edge_indices(f, positions, n_vertices)
 
     if generate_normals:
-        write_vertex_normals(f, positions, indices)
+        write_vertex_normals(f, cartesian_positions, indices)
 
 
-def compute_header(positions, sphere_method, ellipsoid = WGS84):
+def compute_header(positions, cartesian_positions, sphere_method, ellipsoid=WGS84):
     header = {}
-    cartesian_positions = to_ecef(positions, ellipsoid)
 
     ecef_min_x = cartesian_positions[:, 0].min()
     ecef_min_y = cartesian_positions[:, 1].min()

@@ -20,12 +20,9 @@ def to_ecef(positions, ellipsoid = WGS84):
     from latitude-longitude-height to ecef
     """
     ellipsoid_e2 = 1 - (ellipsoid["b"]**2 / ellipsoid["a"]**2)
-    lon = positions[:, 0]
-    lat = positions[:, 1]
+    lon = positions[:, 0] * np.pi / 180
+    lat = positions[:, 1] * np.pi / 180
     alt = positions[:, 2]
-
-    lat *= np.pi / 180
-    lon *= np.pi / 180
 
     n = lambda arr: ellipsoid["a"] / np.sqrt(1 - ellipsoid_e2 * (np.square(np.sin(arr))))
     nlat = n(lat)
